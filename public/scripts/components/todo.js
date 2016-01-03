@@ -2,12 +2,11 @@
   // TODOLIST
       //TODOS
           //TODO
-      //TODO FORM
 
 
 var data = [
-  {id:1, task: "Mow the Lawn", edited: false, complete: true},
-  {id:2, task: "Feed the cat", edited: true, complete: false} 
+  {id:1, task: "Mow the Lawn", complete: true},
+  {id:2, task: "Feed the cat", complete: false} 
 ];
 
 var TodoList = React.createClass({
@@ -26,13 +25,12 @@ var Todos = React.createClass({
   render: function(){
     var todoNode = this.props.data.map(function(todo){
       return(
-        <Todo task={todo.task} key={todo.id} edited={todo.edited} complete={todo.complete}>
+        <Todo task={todo.task} key={todo.id} complete={todo.complete}>
         </Todo>
       );
     });
     return (
       <div className='todoContainer'>
-        <h3> HELLO THESE ARE THE TODOS </h3>
           {todoNode}
       </div>
     );
@@ -46,9 +44,9 @@ var Todos = React.createClass({
 var Todo = React.createClass({
   getInitialState: function() {
     if(this.props.complete){
-      return({checked: true, editing: false, edited: false, task: this.props.task});
+      return({checked: this.props.complete, editing: false, edited: false, task: this.props.task});
     }
-    return {checked: false, editing: false, edited: false, task: this.props.task};
+    return {checked: this.props.complete, editing: false, edited: false, task: this.props.task};
   },
   onCompleteChange: function(newState){
     this.setState({checked: newState});
@@ -77,7 +75,7 @@ var Todo = React.createClass({
           <TodoInput value={this.props.task} textChangeCallback={this.onTextChange}/> : 
           <label className='todo-label'> {this.state.task} </label>
         }
-        {this.state.edited ? <label> - Edited </label>: null}
+        {this.state.edited ? <label className='edited-label'> - Edited </label>: null}
         
         {this.state.checked ? null : <button onClick={this.onEditClick}> Edit </button>}
         
@@ -91,7 +89,7 @@ var TodoInput = React.createClass({
   getInitialState: function(){
     return ({value: this.props.value});
   },
-  handleChange: function(e){
+  handleTextChange: function(e){
     var newState=e.target.value;
     this.setState({value: newState});
     this.props.textChangeCallback(newState);
@@ -101,7 +99,7 @@ var TodoInput = React.createClass({
       <input 
         type='text' 
         value={this.state.value} 
-        onChange={this.handleChange}
+        onChange={this.handleTextChange}
       />
     );
   }
