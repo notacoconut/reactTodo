@@ -33,7 +33,6 @@ app.post('/api/todos', function(req, res){
     var newTodo = {
       id: Date.now(),
       task: req.body.task,
-      edited: req.body.edited,
       complete: req.body.complete
     };
     todos.push(newTodo);

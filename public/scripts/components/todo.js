@@ -2,25 +2,70 @@
   // TODOLIST
       //TODOS
           //TODO
-
-
-var data = [
-  {id:1, task: "Mow the Lawn", complete: true},
-  {id:2, task: "Feed the cat", complete: false} 
-];
+'use strict';
 
 var TodoList = React.createClass({
+  getInitialState: function(){
+    return {data: []};
+  },
+  loadTodosFromServer: function(){
+    $.ajax({
+      url: this.props.url,
+      dataType: 'json',
+      cache: false,
+      success: function(data){
+        this.setState({data: data});
+      }.bind(this),
+      error: function(xhr, status, err){
+        console.error(this.props.url,status, err.toString());
+      }.bind(this)
+    });
+  },
+  handleSave: function(todo){
+    $.ajax({
+      url: this.props.url,
+      dataType: 'json',
+      type: 'POST',
+      data: todo,
+      success: function(data){
+        this.setState({data: data});
+      }.bind(this),
+      error: function(xhr, status, err){
+        console.error(this.props.url, status, err.toString());
+      }.bind(this)
+    });
+  },
+  componentDidMount: function(){
+    this.loadTodosFromServer();
+  },
   render: function() {
     return ( 
       <div className='todoList'> 
         <h1> MY TO-DO LIST </h1>
-          <Todos data={this.props.data}>     
+          <Todos data={this.state.data}>     
           </Todos>
       </div>
     );
   }
 });
+var toolbar = React.createClass({
+  render: function() {
+    return(
+      <div className='toolbar'>
+        <addButton />
+        <saveButton />
+      </div>
+    );
+  }
+});
+////toolbar components
+var addButton = React.createClass({
 
+});
+var saveButton = React.createClass({
+  
+});
+//
 var Todos = React.createClass({
   render: function(){
     var todoNode = this.props.data.map(function(todo){
@@ -36,10 +81,6 @@ var Todos = React.createClass({
     );
   }
 });
-
-////Todos object components
-
-////
 
 var Todo = React.createClass({
   getInitialState: function() {
@@ -125,7 +166,8 @@ var ToggleComplete = React.createClass({
   }
 });
 /////
+
 ReactDOM.render(
-  <TodoList data={data}/>,
+  <TodoList url='api/todos'/>,
   document.getElementById('content')
 );
