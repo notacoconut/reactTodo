@@ -22,6 +22,9 @@ var TodoList = React.createClass({
     });
   },
   handleSave: function(todo){
+    var todos = this.state.data;
+    var newtodos = todos.concat([todo]);
+    this.setState({data: newtodos});
     $.ajax({
       url: this.props.url,
       dataType: 'json',
@@ -35,6 +38,12 @@ var TodoList = React.createClass({
       }.bind(this)
     });
   },
+  handleAdd: function(todo){
+    var todos = this.state.data;
+    var newTodo = todo;
+    var newTodos = todos.concat([newTodo]);
+    this.setState({data: newTodos});
+  },
   componentDidMount: function(){
     this.loadTodosFromServer();
   },
@@ -44,28 +53,28 @@ var TodoList = React.createClass({
         <h1> MY TO-DO LIST </h1>
           <Todos data={this.state.data}>     
           </Todos>
+          <Toolbar handleAddCallback={this.handleAdd}/>
       </div>
     );
   }
 });
-var toolbar = React.createClass({
+
+
+var Toolbar = React.createClass({
+  handleAddClick: function(){
+    this.props.handleAddCallback({id: Date.now(), complete: false, task: 'New Todo'});
+  },
   render: function() {
     return(
       <div className='toolbar'>
-        <addButton />
-        <saveButton />
+        <button onClick={this.handleAddClick}> Add </button>
+        <button onClick={this.handleSaveClick}> Save </button>
       </div>
     );
   }
 });
-////toolbar components
-var addButton = React.createClass({
 
-});
-var saveButton = React.createClass({
-  
-});
-//
+
 var Todos = React.createClass({
   render: function(){
     var todoNode = this.props.data.map(function(todo){
@@ -113,7 +122,7 @@ var Todo = React.createClass({
           completeChangeCallback={this.onCompleteChange}
         />
         { this.state.editing ? 
-          <TodoInput value={this.props.task} textChangeCallback={this.onTextChange}/> : 
+          <TodoInput value={this.state.task} textChangeCallback={this.onTextChange}/> : 
           <label className='todo-label'> {this.state.task} </label>
         }
         {this.state.edited ? <label className='edited-label'> - Edited </label>: null}
