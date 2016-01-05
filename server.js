@@ -23,20 +23,24 @@ app.get('/api/todos', function(req, res){
   });
 });
 app.post('/api/todos', function(req, res){
-  fs.readFile(TODO_FILE, function(err, data){
-    if(err){
-      console.error(err);
-      process.exit(1);
-    }
-    var todos = JSON.parse(data);
+  // fs.readFile(TODO_FILE, function(err, data){
+  //   if(err){
+  //     console.error(err);
+  //     process.exit(1);
+  //   }
+  //   var todos = JSON.parse(data);
 
-    var newTodo = {
-      id: Date.now(),
-      task: req.body.task,
-      complete: req.body.complete
-    };
-    todos.push(newTodo);
-    fs.writeFile(TODO_FILE, JSON.stringify(todos, null, 4), function(err){
+
+  //   var newTodo = {
+  //     id: Date.now(),
+  //     task: req.body.task,
+  //     complete: req.body.complete
+  //   };
+  //   todos.push(newTodo);
+    
+  // });
+  var todos = JSON.parse(req.body);
+  fs.writeFile(TODO_FILE, JSON.stringify(todos, null, 4), function(err){
       if(err) {
         console.error(err);
         process.exit(1);
@@ -44,7 +48,6 @@ app.post('/api/todos', function(req, res){
       res.setHeader('Cache-Control', 'no-cache');
       res.json(todos);
     });
-  });
 });
 
 app.listen(process.env.PORT || 3000, function(){

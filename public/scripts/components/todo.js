@@ -21,17 +21,14 @@ var TodoList = React.createClass({
       }.bind(this)
     });
   },
-  handleSave: function(todo){
-    var todos = this.state.data;
-    var newtodos = todos.concat([todo]);
-    this.setState({data: newtodos});
+  handleSave: function(todos){
     $.ajax({
       url: this.props.url,
       dataType: 'json',
       type: 'POST',
-      data: todo,
-      success: function(data){
-        this.setState({data: data});
+      data: todos,
+      success: function(todos){
+        this.setState({data: todos});
       }.bind(this),
       error: function(xhr, status, err){
         console.error(this.props.url, status, err.toString());
@@ -53,7 +50,7 @@ var TodoList = React.createClass({
         <h1> MY TO-DO LIST </h1>
           <Todos data={this.state.data}>     
           </Todos>
-          <Toolbar handleAddCallback={this.handleAdd}/>
+          <Toolbar handleAddCallback={this.handleAdd} handleSaveCallback={this.handleSave}/>
       </div>
     );
   }
@@ -63,6 +60,9 @@ var TodoList = React.createClass({
 var Toolbar = React.createClass({
   handleAddClick: function(){
     this.props.handleAddCallback({id: Date.now(), complete: false, task: 'New Todo'});
+  },
+  handleSaveClick: function(){
+    this.props.handleSaveCallback({data: this.props.data});
   },
   render: function() {
     return(
